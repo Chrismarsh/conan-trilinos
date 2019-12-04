@@ -43,6 +43,9 @@ class TrilinosConan(ConanFile):
 
     def _configure_cmake(self):
         cmake = CMake(self)
+
+        cmake.definitions["Trilinos_ENABLE_Fortran"] = False
+
         cmake.definitions["Trilinos_ENABLE_Belos"] = True
         cmake.definitions["Trilinos_ENABLE_Ifpack2"] = True
         cmake.definitions["Trilinos_ENABLE_THREAD_SAFE"] = True
