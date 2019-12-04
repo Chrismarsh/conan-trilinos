@@ -2,21 +2,28 @@ from conans import ConanFile, CMake, tools
 import os
 
 
-class LibnameConan(ConanFile):
-    name = "libname"
-    description = "Keep it short"
-    topics = ("conan", "libname", "logging")
-    url = "https://github.com/bincrafters/conan-libname"
-    homepage = "https://github.com/original_author/original_lib"
-    license = "MIT"  # Indicates license type of the packaged library; please use SPDX Identifiers https://spdx.org/licenses/
-    # Remove following lines if the target lib does not use CMake
+class TrilinosConan(ConanFile):
+    name = "trilinos"
+    version = "12.18.1"
+    description = "The Trilinos scientific computing software stack"
+    topics = ("conan", "trilinos", "scientific computing")
+    url = "https://github.com/kevinrichardgreen/conan-trilinos"
+    homepage = "https://trilinos.github.io/"
+    license = "BSD/multi" # TODO: appropriate license tag... packages in Trilinos are variable
+
     exports_sources = ["CMakeLists.txt"]
     generators = "cmake"
 
     # Options may need to change depending on the packaged library
     settings = "os", "arch", "compiler", "build_type"
-    options = {"shared": [True, False], "fPIC": [True, False]}
-    default_options = {"shared": False, "fPIC": True}
+    options = {
+        "shared": [True, False],
+        "fPIC": [True, False]
+    }
+    default_options = {
+        "shared": True,
+        "fPIC": True
+    }
 
     _source_subfolder = "source_subfolder"
     _build_subfolder = "build_subfolder"
@@ -26,18 +33,24 @@ class LibnameConan(ConanFile):
     )
 
     def config_options(self):
-        if self.settings.os == 'Windows':
-            del self.options.fPIC
+        if self.settings.os not in ["Macos", "Linux"]:
+            raise Exception("Unsupported System. This package currently only support Linux/Macos")
 
     def source(self):
         tools.get(**self.conan_data["sources"][self.version])
-        extracted_dir = self.name + "-" + self.version
+        extracted_dir = "Trilinos-trilinos-release-%s" % self.version.replace(".","-")
         os.rename(extracted_dir, self._source_subfolder)
 
     def _configure_cmake(self):
         cmake = CMake(self)
-        cmake.definitions["BUILD_TESTS"] = False  # example
-        cmake.configure(build_folder=self._build_subfolder)
+        cmake.definitions["Trilinos_ENABLE_Belos"] = True
+        cmake.definitions["Trilinos_ENABLE_Ifpack2"] = True
+        cmake.definitions["Trilinos_ENABLE_THREAD_SAFE"] = True
+        cmake.definitions["TPL_ENABLE_MPI"] = True
+        cmake.definitions["Trilinos_ENABLE_OpenMP"] = True
+        cmake.definitions["Trilinos_ENABLE_TESTS"] = True
+        cmake.definitions["BUILD_SHARED_LIBS"] = self.options.shared
+        cmake.configure(source_folder=self._source_subfolder, build_folder=self._build_subfolder)
         return cmake
 
     def build(self):
@@ -48,15 +61,6 @@ class LibnameConan(ConanFile):
         self.copy(pattern="LICENSE", dst="licenses", src=self._source_subfolder)
         cmake = self._configure_cmake()
         cmake.install()
-        # If the CMakeLists.txt has a proper install method, the steps below may be redundant
-        # If so, you can just remove the lines below
-        include_folder = os.path.join(self._source_subfolder, "include")
-        self.copy(pattern="*", dst="include", src=include_folder)
-        self.copy(pattern="*.dll", dst="bin", keep_path=False)
-        self.copy(pattern="*.lib", dst="lib", keep_path=False)
-        self.copy(pattern="*.a", dst="lib", keep_path=False)
-        self.copy(pattern="*.so*", dst="lib", keep_path=False)
-        self.copy(pattern="*.dylib", dst="lib", keep_path=False)
 
     def package_info(self):
         self.cpp_info.libs = tools.collect_libs(self)
