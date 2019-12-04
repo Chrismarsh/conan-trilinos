@@ -1,7 +1,6 @@
 from conans import ConanFile, CMake, tools
 import os
 
-
 class TrilinosConan(ConanFile):
     name = "trilinos"
     version = "12.18.1"
@@ -18,11 +17,17 @@ class TrilinosConan(ConanFile):
     settings = "os", "arch", "compiler", "build_type"
     options = {
         "shared": [True, False],
-        "fPIC": [True, False]
+        "with_belos": [True, False],
+        "with_ifpack2": [True, False],
+        "with_openmp": [True, False],
+        "with_mpi": [True, False]
     }
     default_options = {
         "shared": True,
-        "fPIC": True
+        "with_belos": True,   # iterative solvers
+        "with_ifpack2": True, # preconditioners
+        "with_openmp": True,
+        "with_mpi": False
     }
 
     _source_subfolder = "source_subfolder"
@@ -45,15 +50,20 @@ class TrilinosConan(ConanFile):
         cmake = CMake(self)
 
         cmake.definitions["Trilinos_ENABLE_Fortran"] = False
+        cmake.definitions["Trilinos_ENABLE_TESTS"] = False
 
-        cmake.definitions["Trilinos_ENABLE_Belos"] = True
-        cmake.definitions["Trilinos_ENABLE_Ifpack2"] = True
-        cmake.definitions["Trilinos_ENABLE_THREAD_SAFE"] = True
-        cmake.definitions["TPL_ENABLE_MPI"] = True
-        cmake.definitions["Trilinos_ENABLE_OpenMP"] = True
-        cmake.definitions["Trilinos_ENABLE_TESTS"] = True
         cmake.definitions["BUILD_SHARED_LIBS"] = self.options.shared
+
+        cmake.definitions["Trilinos_ENABLE_Belos"] = self.options.with_belos
+        cmake.definitions["Trilinos_ENABLE_Ifpack2"] = self.options.with_ifpack2
+
+        cmake.definitions["Trilinos_ENABLE_OpenMP"] = self.options.with_openmp
+        cmake.definitions["Trilinos_ENABLE_THREAD_SAFE"] = self.options.with_openmp
+
+        cmake.definitions["TPL_ENABLE_MPI"] = self.options.with_mpi
+
         cmake.configure(source_folder=self._source_subfolder, build_folder=self._build_subfolder)
+
         return cmake
 
     def build(self):
