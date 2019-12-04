@@ -17,6 +17,7 @@ class TrilinosConan(ConanFile):
     settings = "os", "arch", "compiler", "build_type"
     options = {
         "shared": [True, False],
+        "with_all_packages": [True, False],
         "with_belos": [True, False],
         "with_ifpack2": [True, False],
         "with_openmp": [True, False],
@@ -24,8 +25,9 @@ class TrilinosConan(ConanFile):
     }
     default_options = {
         "shared": True,
-        "with_belos": True,   # iterative solvers
-        "with_ifpack2": True, # preconditioners
+        "with_all_packages": False,
+        "with_belos": True,         # iterative solvers
+        "with_ifpack2": True,       # preconditioners
         "with_openmp": True,
         "with_mpi": False
     }
@@ -53,6 +55,8 @@ class TrilinosConan(ConanFile):
         cmake.definitions["Trilinos_ENABLE_TESTS"] = False
 
         cmake.definitions["BUILD_SHARED_LIBS"] = self.options.shared
+
+        cmake.definitions["Trilinos_ENABLE_ALL_PACKAGES"] = self.options.with_all_packages
 
         cmake.definitions["Trilinos_ENABLE_Belos"] = self.options.with_belos
         cmake.definitions["Trilinos_ENABLE_Ifpack2"] = self.options.with_ifpack2
