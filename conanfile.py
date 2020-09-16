@@ -35,6 +35,7 @@ class TrilinosConan(ConanFile):
     _source_subfolder = "source_subfolder"
     _build_subfolder = "build_subfolder"
 
+    build_policy = 'always'
     requires = (
         "zlib/1.2.11"
     )
@@ -47,6 +48,10 @@ class TrilinosConan(ConanFile):
         tools.get(**self.conan_data["sources"][self.version])
         extracted_dir = "Trilinos-trilinos-release-%s" % self.version.replace(".","-")
         os.rename(extracted_dir, self._source_subfolder)
+
+        if tools.os_info.is_macos and self.options.with_openmp:
+            print('!!! Macos and OMP not supported, setting with_openmp=false')
+            self.options.with_openmp = False
 
     def _configure_cmake(self):
         cmake = CMake(self)
