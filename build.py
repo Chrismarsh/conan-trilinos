@@ -1,6 +1,6 @@
 from cpt.packager import ConanMultiPackager
 from collections import defaultdict
-
+import platform
 if __name__ == "__main__":
 
     command=""
