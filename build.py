@@ -18,7 +18,7 @@ if __name__ == "__main__":
         if not options['trilinos:shared']:
             shared = "static" 
       
-        named_builds[settings['compiler']+shared ].append([settings, options, env_vars, build_requires, reference])
+        named_builds[settings['compiler'] +"_"+shared].append([settings, options, env_vars, build_requires, reference])
 
     builder.named_builds = named_builds
 
