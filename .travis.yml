@@ -5,7 +5,7 @@ env:
       - CONAN_LOGIN_USERNAME: "chrismarsh"
       - CONAN_CHANNEL: "stable"
       - CONAN_UPLOAD: "https://api.bintray.com/conan/chrismarsh/CHM"
-      - MAKEFLAGS: "-j 4"
+      - MAKEFLAGS: "-j 6"
 
 
 linux: &linux
