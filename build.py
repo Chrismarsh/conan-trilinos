@@ -5,7 +5,7 @@ if __name__ == "__main__":
 
     command=""
     if platform.system()== "Linux":
-        command = "sudo apt-get -qq update && sudo apt-get -qq install -y libblas-dev liblapack-dev"
+        command = "sudo apt-get -qq install -y libblas-dev liblapack-dev" #sudo apt-get -qq update && 
 
     
     builder = ConanMultiPackager(cppstds=[14],
