@@ -41,4 +41,4 @@ install:
 
 script:
    - chmod +x .travis/run.sh
-   - ./.travis/run.sh
+   - ./.travis/run.sh 2> warnings.txt
