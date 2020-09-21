@@ -71,6 +71,8 @@ class TrilinosConan(ConanFile):
 
         cmake.definitions["TPL_ENABLE_MPI"] = self.options.with_mpi
 
+        cmake.definitions["CMAKE_CXX_FLAGS"] ="-Wno-unused-result -Wno-deprecated-declarations"
+
         cmake.configure(source_folder=self._source_subfolder, build_folder=self._build_subfolder)
 
         return cmake
