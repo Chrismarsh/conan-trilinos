@@ -21,7 +21,9 @@ class TrilinosConan(ConanFile):
         "with_belos": [True, False],
         "with_ifpack2": [True, False],
         "with_openmp": [True, False],
-        "with_mpi": [True, False]
+        "with_mpi": [True, False],
+        "with_mkl": [True, False],
+        "with_openblas": [True,False]
     }
     default_options = {
         "shared": True,
@@ -29,7 +31,9 @@ class TrilinosConan(ConanFile):
         "with_belos": True,         # iterative solvers
         "with_ifpack2": True,       # preconditioners
         "with_openmp": True,
-        "with_mpi": False
+        "with_mpi": False,
+        "with_mkl": False,
+        "with_openblas":False
     }
 
     _source_subfolder = "source_subfolder"
@@ -55,6 +59,31 @@ class TrilinosConan(ConanFile):
 
     def _configure_cmake(self):
         cmake = CMake(self)
+
+        if self.options.with_mkl:
+
+            try:
+                MKLROOT = os.environ['MKLROOT']
+            except:
+                self.output.error('If building against mkl, ensure $MKLROOT is set. For example, MKLROOT=/opt/imkl/2019.3.199/mkl')
+                raise Exception('MKLROOT not set')
+ 
+
+            # as per https://github.com/trilinos/Trilinos/blob/master/cmake/TPLs/FindTPLMKL.cmake#L116
+            cmake.definitions["BLAS_LIBRARY_DIRS:FILEPATH"] =f"{MKLROOT}/lib/intel64" 
+            cmake.definitions["BLAS_LIBRARY_NAMES:STRING"] ="mkl_rt" 
+            cmake.definitions["LAPACK_LIBRARY_DIRS:FILEPATH"] =f"{MKLROOT}/lib/intel64" 
+            cmake.definitions["LAPACK_LIBRARY_NAMES:STRING"] ="mkl_rt" 
+            cmake.definitions["TPL_ENABLE_MKL:BOOL"] ="ON" 
+            cmake.definitions["MKL_LIBRARY_DIRS:FILEPATH"] =f"{MKLROOT}/lib/intel64" 
+            cmake.definitions["MKL_LIBRARY_NAMES:STRING"] ="mkl_rt" 
+            cmake.definitions["MKL_INCLUDE_DIRS:FILEPATH"] =f"{MKLROOT}/include" 
+
+        if self.options.with_openblas:
+            cmake.definitions["BLAS_LIBRARY_NAMES:STRING"] ="openblas" 
+            cmake.definitions["LAPACK_LIBRARY_NAMES:STRING"] ="openblas" 
+  
+
 
         cmake.definitions["Trilinos_ENABLE_Fortran"] = False
         cmake.definitions["Trilinos_ENABLE_TESTS"] = False
