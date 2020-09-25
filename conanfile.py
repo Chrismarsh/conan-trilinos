@@ -23,7 +23,10 @@ class TrilinosConan(ConanFile):
         "with_openmp": [True, False],
         "with_mpi": [True, False],
         "with_mkl": [True, False],
-        "with_openblas": [True,False]
+        "with_openblas": [True,False],
+
+        "mkl_root": "ANY",
+        "blas_root":"ANY"
     }
     default_options = {
         "shared": True,
@@ -33,7 +36,10 @@ class TrilinosConan(ConanFile):
         "with_openmp": True,
         "with_mpi": False,
         "with_mkl": False,
-        "with_openblas":False
+        "with_openblas":False,
+
+        "mkl_root": None,
+        "blas_root": None
     }
 
     _source_subfolder = "source_subfolder"
@@ -62,33 +68,31 @@ class TrilinosConan(ConanFile):
 
         if self.options.with_mkl:
 
-            try:
-                MKLROOT = os.environ['MKLROOT']
-            except:
-                self.output.error('If building against mkl, ensure $MKLROOT is set. For example, MKLROOT=/opt/imkl/2019.3.199/mkl/lib/intel64" ')
-                raise Exception('MKLROOT not set')
- 
+            if self.options.mkl_root is None:
+                self.output.error('If building against mkl, ensure -o mkl_root is set. For example, -o trilinos:mkl_root=/opt/imkl/2019.3.199/mkl/lib/intel64" ')
+                raise Exception('mkl_root not set')
 
             # as per https://github.com/trilinos/Trilinos/blob/master/cmake/TPLs/FindTPLMKL.cmake#L116
-            cmake.definitions["BLAS_LIBRARY_DIRS:FILEPATH"] =MKLROOT 
+            cmake.definitions["BLAS_LIBRARY_DIRS:FILEPATH"] =self.options.mkl_root 
             cmake.definitions["BLAS_LIBRARY_NAMES:STRING"] ="mkl_rt" 
-            cmake.definitions["LAPACK_LIBRARY_DIRS:FILEPATH"] =MKLROOT
+
+            cmake.definitions["LAPACK_LIBRARY_DIRS:FILEPATH"] =self.options.mkl_root
             cmake.definitions["LAPACK_LIBRARY_NAMES:STRING"] ="mkl_rt" 
+            
             cmake.definitions["TPL_ENABLE_MKL:BOOL"] ="ON" 
-            cmake.definitions["MKL_LIBRARY_DIRS:FILEPATH"] =MKLROOT
+            cmake.definitions["MKL_LIBRARY_DIRS:FILEPATH"] =self.options.mkl_root
             cmake.definitions["MKL_LIBRARY_NAMES:STRING"] ="mkl_rt" 
-            cmake.definitions["MKL_INCLUDE_DIRS:FILEPATH"] =MKLROOT+"../../include" 
+            cmake.definitions["MKL_INCLUDE_DIRS:FILEPATH"] =self.options.mkl_root+"/../../include" 
 
         if self.options.with_openblas:
             cmake.definitions["BLAS_LIBRARY_NAMES:STRING"] ="openblas" 
             cmake.definitions["LAPACK_LIBRARY_NAMES:STRING"] ="openblas" 
 
-        try:
-            BLASROOT = os.environ['BLASROOT']
-            cmake.definitions["BLAS_LIBRARY_DIRS:FILEPATH"] = BLASROOT
-            cmake.definitions["LAPACK_LIBRARY_DIRS:FILEPATH"] = BLASROOT
-        except:
-            pass
+        
+        if self.options.blas_root:
+            cmake.definitions["BLAS_LIBRARY_DIRS:FILEPATH"] = self.options.blas_root
+            cmake.definitions["LAPACK_LIBRARY_DIRS:FILEPATH"] = self.options.blas_root
+        
 
 
         cmake.definitions["Trilinos_ENABLE_Fortran"] = False

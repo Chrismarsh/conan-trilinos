@@ -8,7 +8,7 @@ Because of the tuned nature of BLAS and LAPACK libraries, only system BLAS and L
 
 ### Intel MKL
 
-To build against the Intel Math Kernel Library set the env var `$MKLROOT` to point to the root of the mkl install. On x86_64 platforms this will include the `/lib/intel64` part. 
+To build against the Intel Math Kernel Library set via `-o mkl_root` to point to the root of the mkl install. On x86_64 platforms this will include the `/lib/intel64` part. 
 
 ### OpenBLAS
 
@@ -16,4 +16,4 @@ Set the conan option `-o trilinos:with_openblas=True` to change the link library
 
 ### Custom BLAS location
 
-The trilinos dependencies look for the BLAS libraries in a standard location. On HPC machines this will almost certainly fail, so the location of the library direction may be set via the env var `$BLASROOT`. LAPACK search will be set to the same path.  
+The trilinos dependencies look for the BLAS libraries in a standard location. On HPC machines this will almost certainly fail, so the location of the library direction may be set via the `-o blas_root`. LAPACK search will be set to the same path.  
