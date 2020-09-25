@@ -72,7 +72,7 @@ class TrilinosConan(ConanFile):
             # as per https://github.com/trilinos/Trilinos/blob/master/cmake/TPLs/FindTPLMKL.cmake#L116
             cmake.definitions["BLAS_LIBRARY_DIRS:FILEPATH"] =MKLROOT 
             cmake.definitions["BLAS_LIBRARY_NAMES:STRING"] ="mkl_rt" 
-            cmake.definitions["LAPACK_LIBRARY_DIRS:FILEPATH"] =MKLROOT+
+            cmake.definitions["LAPACK_LIBRARY_DIRS:FILEPATH"] =MKLROOT
             cmake.definitions["LAPACK_LIBRARY_NAMES:STRING"] ="mkl_rt" 
             cmake.definitions["TPL_ENABLE_MKL:BOOL"] ="ON" 
             cmake.definitions["MKL_LIBRARY_DIRS:FILEPATH"] =MKLROOT
