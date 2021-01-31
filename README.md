@@ -1,6 +1,14 @@
-## Package Status
+# trilinos
 
-[![Build Status](https://travis-ci.com/Chrismarsh/conan-trilinos.svg?branch=master)](https://travis-ci.com/Chrismarsh/conan-trilinos)
+This is a minimal Conan build of the trilinos library for use with [CHM](https://github.com/Chrismarsh/CHM). 
+
+Build artifacts are uploaded to [Bintray](https://bintray.com/chrismarsh/CHM)
+
+
+```
+conan install trilinos/12.18.1@CHM/stable
+```
+
 
 ## General Information
 
