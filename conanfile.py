@@ -3,7 +3,6 @@ import os
 
 class TrilinosConan(ConanFile):
     name = "trilinos"
-    version = "12.18.1"
     description = "The Trilinos scientific computing software stack"
     topics = ("conan", "trilinos", "scientific computing")
     url = "https://github.com/kevinrichardgreen/conan-trilinos"
