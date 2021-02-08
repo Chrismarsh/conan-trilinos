@@ -91,6 +91,10 @@ class TrilinosConan(ConanFile):
         if self.options.blas_root:
             cmake.definitions["BLAS_LIBRARY_DIRS:FILEPATH"] = self.options.blas_root
             cmake.definitions["LAPACK_LIBRARY_DIRS:FILEPATH"] = self.options.blas_root
+
+        if self.settings.compiler == 'apple-clang' and tools.Version(self.settings.compiler.version).major >= '12':
+                self.output.info("apple-clang v12 detected")
+                cmake.definitions["CMAKE_CXX_FLAGS"] = "-Wno-implicit-function-declaration"
         
 
 
