@@ -93,9 +93,9 @@ class TrilinosConan(ConanFile):
             cmake.definitions["LAPACK_LIBRARY_DIRS:FILEPATH"] = self.options.blas_root
 
         if self.settings.compiler == 'apple-clang' and tools.Version(self.settings.compiler.version).major >= '12':
-                self.output.info("apple-clang v12 detected")
-                cmake.definitions["CMAKE_CXX_FLAGS"] = "-Wno-implicit-function-declaration"
-        
+            self.output.info("apple-clang v12 detected")
+            cmake.definitions["CMAKE_CXX_FLAGS"] = "-Wno-implicit-function-declaration"
+            cmake.definitions["CMAKE_C_FLAGS"] = "-Wno-implicit-function-declaration"
 
 
         cmake.definitions["Trilinos_ENABLE_Fortran"] = False
