@@ -1,6 +1,8 @@
 from cpt.packager import ConanMultiPackager
 from collections import defaultdict
 import platform
+import os
+
 if __name__ == "__main__":
 
    
@@ -20,7 +22,7 @@ if __name__ == "__main__":
         if not options['trilinos:shared']:
             shared = "static" 
       
-        if env_vars['USE_MPI'] == 'with-mpi':
+        if os.environ['USE_MPI'] == 'with-mpi':
             options['trilinos:with_mpi'] = True
 
         named_builds[settings['compiler']].append([settings, options, env_vars, build_requires, reference])
