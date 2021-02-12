@@ -58,12 +58,13 @@ class TrilinosConan(ConanFile):
         extracted_dir = "Trilinos-trilinos-release-%s" % self.version.replace(".","-")
         os.rename(extracted_dir, self._source_subfolder)
 
-        if tools.os_info.is_macos and self.options.with_openmp:
-            print('!!! Macos and OMP not supported, setting with_openmp=false')
-            self.options.with_openmp = False
 
     def _configure_cmake(self):
         cmake = CMake(self)
+
+        if tools.os_info.is_macos and self.options.with_openmp:
+            print('!!! Macos and OMP not supported, setting with_openmp=false')
+            self.options.with_openmp = False
 
         if self.options.with_mkl:
 
