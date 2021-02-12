@@ -6,8 +6,7 @@ if __name__ == "__main__":
    
     builder = ConanMultiPackager(cppstds=[14],
                                 archs=["x86_64"],
-                                build_types=["Release"],
-                                docker_entry_script=command)
+                                build_types=["Release"])
                               
     builder.add_common_builds(pure_c=False,shared_option_name=None)
 
