@@ -3,17 +3,13 @@ from collections import defaultdict
 import platform
 if __name__ == "__main__":
 
-    command=""
-    if platform.system()== "Linux":
-        command = "sudo apt-get -qq update &&  sudo apt-get -qq install -y libblas-dev liblapack-dev" #
-
-    
+   
     builder = ConanMultiPackager(cppstds=[14],
                                 archs=["x86_64"],
                                 build_types=["Release"],
                                 docker_entry_script=command)
                               
-    builder.add_common_builds(pure_c=False,shared_option_name='trilinos:shared')
+    builder.add_common_builds(pure_c=False,shared_option_name=None)
 
     builder.remove_build_if(lambda build: build.settings["compiler.libcxx"] == "libstdc++")
 
@@ -25,7 +21,10 @@ if __name__ == "__main__":
         if not options['trilinos:shared']:
             shared = "static" 
       
-        named_builds[settings['compiler'] +"_"+shared].append([settings, options, env_vars, build_requires, reference])
+        if env_vars['USE_MPI'] == 'with-mpi':
+            options['trilinos:with_mpi'] = True
+
+        named_builds[settings['compiler']].append([settings, options, env_vars, build_requires, reference])
 
     builder.named_builds = named_builds
 

@@ -34,6 +34,7 @@ jobs:
       fail-fast: false
       matrix:
         python-version: [3.8]
+        use-mpi: ["with-mpi","without-mpi"]
         cfg:
           - {os: "ubuntu-latest", compiler: "gcc", version: 7}
           - {os: "ubuntu-latest", compiler: "gcc", version: 8}
@@ -55,7 +56,21 @@ jobs:
         run: |
           pip install conan --upgrade
           pip install conan_package_tools
-          
+
+          if [ "$RUNNER_OS" == "Linux" ]; then
+            sudo apt-get install libblas-dev 
+            sudo apt-get install liblapack-dev
+          fi
+
+      - name: Install MPI
+        if: ${{ matrix.use-mpi  == 'with-mpi' }}
+        run: |
+          if [ "$RUNNER_OS" == "Linux" ]; then
+            sudo apt-get install libopenmpi-dev
+          else
+            brew install openmpi
+          fi
+
       - name: env linux
         if: ${{ matrix.cfg.os  == 'ubuntu-latest' }}
         uses: allenevans/set-env@v2.0.0
@@ -74,8 +89,9 @@ jobs:
         run: |
           python build.py
         env:
-          CONAN_CURRENT_PAGE: ${{matrix.cfg.compiler}}_shared
+          CONAN_CURRENT_PAGE: ${{matrix.cfg.compiler}}
           CONAN_REFERENCE: trilinos/${{ matrix.lib-version}}
+          USE_MPI: ${{ matrix.use-mpi }}
 
 
 
