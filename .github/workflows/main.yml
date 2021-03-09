@@ -36,9 +36,12 @@ jobs:
         python-version: [3.8]
         use-mpi: ["with-mpi","without-mpi"]
         cfg:
-          - {os: "ubuntu-latest", compiler: "gcc", version: 7}
-          - {os: "ubuntu-latest", compiler: "gcc", version: 8}
-          - {os: "ubuntu-latest", compiler: "gcc", version: 9}
+          - {os: "ubuntu-18.04", compiler: "gcc", version: 7}
+          - {os: "ubuntu-18.04", compiler: "gcc", version: 8}
+          - {os: "ubuntu-18.04", compiler: "gcc", version: 9}
+          - {os: "ubuntu-20.04", compiler: "gcc", version: 7}
+          - {os: "ubuntu-20.04", compiler: "gcc", version: 8}
+          - {os: "ubuntu-20.04", compiler: "gcc", version: 9}
           - {os: "macos-latest", compiler: "apple-clang", version: "12.0"}
         lib-version: ["12.18.1","13.0.1"]
 
