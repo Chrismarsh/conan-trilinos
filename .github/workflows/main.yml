@@ -21,6 +21,9 @@ env:
   CONAN_PASSWORD: ${{ secrets.CONAN_PASSWORD }}
   CONAN_STABLE_BRANCH_PATTERN: "stable/*"
   CONAN_UPLOAD_ONLY_WHEN_STABLE: "1"
+  CONAN_REQUEST_TIMEOUT: 600
+  CONAN_RETRY: 30
+  CONAN_RETRY_WAIT: 60
   MAKEFLAGS: "-j2"
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
@@ -62,6 +65,7 @@ jobs:
 
           if [ "$RUNNER_OS" == "Linux" ]; then
             sudo apt-get update
+            sudo apt-get upgrade
             sudo apt-get install libblas-dev 
             sudo apt-get install liblapack-dev
           fi
