@@ -21,6 +21,7 @@ env:
   CONAN_PASSWORD: ${{ secrets.CONAN_PASSWORD }}
   CONAN_STABLE_BRANCH_PATTERN: "stable/*"
   CONAN_UPLOAD_ONLY_WHEN_STABLE: "1"
+  CONAN_UPLOAD_DEPENDENCIES: "all"
   CONAN_REQUEST_TIMEOUT: 600
   CONAN_RETRY: 30
   CONAN_RETRY_WAIT: 60
@@ -45,7 +46,7 @@ jobs:
           - {os: "ubuntu-20.04", compiler: "gcc", version: 7}
           - {os: "ubuntu-20.04", compiler: "gcc", version: 8}
           - {os: "ubuntu-20.04", compiler: "gcc", version: 9}
-          - {os: "macos-latest", compiler: "apple-clang", version: "12.0"}
+          - {os: "macos-10.15", compiler: "apple-clang", version: "12.0"}
         lib-version: ["12.18.1","13.0.1"]
 
     # Steps represent a sequence of tasks that will be executed as part of the job
@@ -69,6 +70,20 @@ jobs:
             sudo apt-get install libblas-dev 
             sudo apt-get install liblapack-dev
           fi
+          
+      - name: Setup conan
+        run: |
+          conan profile new default --detect
+          conan config install https://github.com/Chrismarsh/conan-config.git
+
+          if [ "$RUNNER_OS" == "Linux" ]; then
+            conan profile update settings.os.distro="$CFG_OS" default
+          else
+            conan profile update settings.os.version=`echo "$CFG_OS" | cut -d'-' -f2` default
+          fi
+          cat ~/.conan/profiles/default
+        env:
+          CFG_OS: ${{matrix.cfg.os}}
 
       - name: Install MPI
         if: ${{ matrix.use-mpi  == 'with-mpi' }}
@@ -88,7 +103,7 @@ jobs:
           CXX: g++-${{ matrix.cfg.version }}
 
       - name: env macos
-        if: ${{ matrix.cfg.os  == 'macos-latest' }}
+        if: startsWith( matrix.cfg.os, 'macos' )
         uses: allenevans/set-env@v2.0.0
         with:
           CONAN_APPLE_CLANG_VERSIONS: ${{ matrix.cfg.version }}

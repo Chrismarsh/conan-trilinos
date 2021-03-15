@@ -44,9 +44,8 @@ class TrilinosConan(ConanFile):
     _source_subfolder = "source_subfolder"
     _build_subfolder = "build_subfolder"
 
-    # build_policy = 'always'
     requires = (
-        "zlib/1.2.11"
+        "zlib/[>1.2]"
     )
 
     def config_options(self):
