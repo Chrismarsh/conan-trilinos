@@ -112,7 +112,6 @@ jobs:
         run: |
           python build.py
         env:
-          CONAN_CURRENT_PAGE: ${{matrix.cfg.compiler}}
           CONAN_REFERENCE: trilinos/${{ matrix.lib-version}}
           USE_MPI: ${{ matrix.use-mpi }}
 
