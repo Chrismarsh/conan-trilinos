@@ -3,7 +3,7 @@ from collections import defaultdict
 import platform
 import os
 
-iif __name__ == "__main__":
+if __name__ == "__main__":
     builder = ConanMultiPackager(cppstds=[14],
                                 archs=["x86_64"],
                                 build_types=["Release"],
