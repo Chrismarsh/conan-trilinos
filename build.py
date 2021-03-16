@@ -15,7 +15,7 @@ if __name__ == "__main__":
     
 
     builder.update_build_if(lambda build: os.environ['USE_MPI'] == 'with-mpi',
-                        new_options={'trilinos:without_mpi': False})
+                        new_options={'trilinos:with_mpi': False})
 
     builder.run()
 
